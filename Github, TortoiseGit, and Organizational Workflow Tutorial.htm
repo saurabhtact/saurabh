@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Github, TortoiseGit, and Organizational Workflow Tutorial</title>
+    <link rel="shortcut icon" href="http://uncod.in/images/favicon.ico">
+    <link href="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/css_002.css" rel="stylesheet" type="text/css">
+    <link href="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/css.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/main.css" type="text/css" media="screen, projection">
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    
+    <div id="horiz-bar">
+      <div class="content">
+        
+          <a href="http://uncod.in/"><img class="logo-small" src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/uncodin-logo-small.png" alt="Uncodin Logo" title="Home"></a>
+        
+        <ul>
+          
+            <li><a href="http://uncod.in/about">About</a></li>
+          
+          
+            <li><a href="http://uncod.in/blog">Blog</a></li>
+          
+
+        </ul>	
+      </div>
+    </div>
+    <div id="swatch"></div>
+    <div id="main">
+      <div class="content">
+        
+  <article>
+    
+      <header>
+        <div class="container">
+          <h1>Github, TortoiseGit, and Organizational Workflow Tutorial</h1>
+          
+            <div id="attribution">
+              By
+              
+                
+                  
+                  Lawton Campbell
+                
+              
+              on Feb 27, 2012
+            </div>
+          
+          
+            <div id="categories">
+              Filed under: 
+              
+                
+                <a href="http://uncod.in/blog/#Tutorials">Tutorials</a>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+    <p>This is a very rough, cut and dry introduction to using Github 
+with the TortoiseGit Windows client in an organizational environment. 
+Git itself can be a very convoluted (but featureful) tool; it's got 
+quite a learning curve. The goal of this article is to get you up and 
+running with a minimum amount of overhead. There's a massive amount of 
+functionality it won't cover, and I encourage you to explore some of the
+ more in-depth features of git -- there's a useful tool or trick for 
+pretty much everything you can think of.</p>
+
+<p>I apologize ahead of time for mixing terms around a bit. I tend to 
+mash canonical and non-canonical names for things in a haphazard attempt
+ to make explanations more clear, but rarely succeed in the attempt.</p>
+
+<h2>Before you start</h2>
+
+<p>You'll need to do the following things:</p>
+
+<ul>
+<li>Install msysgit, the Windows version of Git (<a href="http://uncod.in/blog/installing-msysgit-on-windows7">installation instructions</a>)</li>
+<li>Install TortoiseGit, a friendly GUI wrapper around msysgit (<a href="http://uncod.in/blog/installing-tortoisegit-on-windows7">installation instructions</a>)</li>
+<li>Have a Github account set up with the public half of your private key (<a href="http://uncod.in/blog/setting-up-a-github-account-on-windows7">setup instructions</a>)</li>
+<li>Your, uhh, private key and passphrase</li>
+</ul><h2>A brief overview of git and github</h2>
+
+<p>Git is a decentralized <a href="http://en.wikipedia.org/wiki/Revision_control">version control system</a>. The "decentralized" bit sets it apart from other version control systems like <a href="http://en.wikipedia.org/wiki/CVS_%28software%29">CVS</a>, <a href="http://en.wikipedia.org/wiki/Subversion_%28software%29">SVN</a> or <a href="http://en.wikipedia.org/wiki/Perforce">Perforce</a>.
+ "Decentralized" means that there is no central repository -- each 
+developer has a repository (or a few copies) that contains the entire 
+history of everything. This has some advantages:</p>
+
+<ul>
+<li>You can make commits without being network-connected</li>
+<li>You can commit without worrying about build-breakage</li>
+<li>In a disaster scenario, you're fine unless <em>every</em> copy of the repo is wiped out</li>
+</ul><p>Unfortunately, these come at the cost of additional complexity.</p>
+
+<p>To simplify things a bit, in most real-world scenarios, one 
+repository is designated as blessed. This blessed repository serves as a
+ central, true copy. All the other repositories (or, "clones") still 
+contain the same version history; the blessed repository simply serves 
+as a synchronization primitive to make the workflow cleaner.</p>
+
+<p>You can do a variety of things with a repository. These include --</p>
+
+<ul>
+<li>Add new commits to a local repository (on your machine)</li>
+<li>Send commits to another repository (on your machine or the network)</li>
+<li>Get commits from another repository (on your machine or the network)</li>
+</ul><p>In the setup we're using, each developer interacts with three repositories:</p>
+
+<ul>
+<li>The repository on your local machine</li>
+<li>Your "fork" on Github</li>
+<li>The "one true repo", which is the central, blessed repository</li>
+</ul><p>You're free to do whatever you want with the repository on your 
+machine and your fork on Github. Typically, you'll make commits on your 
+local repository and send them to your Github fork immediately (or, as 
+soon as you're network-connected). Commits going into the blessed 
+repository must go through a review process (using Github's wonderful 
+interface) before they're accepted and merged into the codebase. This 
+process is performed using a pull request on Github, which is detailed 
+further down.</p>
+
+<p>But enough talk, have at you.</p>
+
+<h2>Let's get forking</h2>
+
+<p>Right now, we've only got the blessed repository. We need to create 
+both your fork and your local copy set up. First, log into Github, 
+navigate to <a href="https://github.com/Uncodin">our Github page</a> and select a repository you'd like to work on. I'm going to assume for this case you want to work on <code>edu-games</code> (and, if that's the case, you can jump <a href="https://github.com/Uncodin/edu-games">straight to that project</a>).</p>
+
+<p>Click the <code>Fork</code> button in the right-hand corner:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/workflow1.png" alt="workflow1"></p>
+
+<p>After some hardcore forking action, you'll be greeted with your 
+Github fork. This is your personal copy of the blessed repository ("the 
+upstream repository"; though you'll have to manually pull changes from 
+upstream to get updates. We'll get to that later).</p>
+
+<p>Assuming your Github username is Bob and the name of the upstream repository is <code>edu-games</code>, your fork will be located at <code>https://github.com/Bob/edu-games</code>.</p>
+
+<h2>Cloning your fork into a local repository</h2>
+
+<p>Git doesn't allow you to commit directly to a repository on the 
+network -- you need to make a local copy before you can start doing 
+work. Making a copy, in Git terminology, is called "cloning", and we're 
+going to do it with TortoiseGit. Start by right-clicking on the Desktop 
+(or other appropriate place) to bring up a context menu.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone1.png" alt="clone1"></p>
+
+<p>From this menu, select <code>Git Clone...</code> and you'll be greeted with the following dialog:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone2.png" alt="clone2"></p>
+
+<p>Here, you'll need to enter the URL for your Github fork, and the location of your private key. <strong>Do not enter the URL of the blessed, upstream repository</strong> (you won't be able to send your commits directly to the upstream). Once you've got the appropriate information inputted, click <code>OK</code>, and it will prompt you for your key's passphrase.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone3.png" alt="clone3"></p>
+
+<p>Toss in your passphrase and hit <code>OK</code>. TortoiseGit will 
+save your passphrase for an indeterminate amount of time (either until 
+Logout or Shutdown, I'm not entirely sure).</p>
+
+<p>If this is your first time connecting to Github's servers, you'll get the following message:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone4.png" alt="clone4"></p>
+
+<p>Check to make sure that the <code>rsa2 key fingerprint</code> the 
+dialog tells you is the same as in the screenshot; if it's not, then 
+something is terribly wrong (it's not Github you're communicating with).
+ The reason you get this dialog is due to the nature of public key 
+cryptography. You don't yet have Github's public key, so you need to 
+verify it with someone else (e.g., this tutorial). Once you connect 
+once, their public key is saved on your machine and you'll never be 
+prompted again. If their public key changes for some reason (e.g., 
+because it's someone else on the other end of the tube), you'll know 
+immediately and Git will cease communication before any damage is done.</p>
+
+<p>If the key fingerprint is correct, click <code>Yes</code>. If not, phone your IT point-of-contact immediately.</p>
+
+<p>A window should pop up with a progress bar as the repository is 
+copied to your machine. Since it contains the entire history (and there 
+are a lot of art assets and every version of them and so forth) it can 
+take a bit of time on a slow network connection. It's only worth one 
+coffee break though, since you only have to download everything when you
+ first clone a repository.</p>
+
+<p>Once it's finished downloading, we need to take one last step -- we 
+need to tell your local repository about the blessed upstream 
+repository. To start, open up the TortoiseGit settings by right-clicking
+ in your repository and selecting <code>Settings</code></p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone5.png" alt="clone5"></p>
+
+<p>Select <code>Remote</code> from the left menu. You'll get this dialog, albiet without the details filled in:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/clone6.png" alt="clone6"></p>
+
+<p>In the fields, put in</p>
+
+<ul>
+<li>
+<strong>Remote</strong>: <code>upstream</code>
+</li>
+<li>
+<strong>Url</strong>: The URL to the upstream repository, except with <code>https://</code> replaced with <code>git@</code>
+</li>
+<li>
+<strong>Putty Key</strong>: Your private key</li>
+</ul><p>Hit <code>Add New</code>, then <code>OK</code>. You're all set!</p>
+
+<h2>Making changes, adding commits</h2>
+
+<p>With your fresh clone, look around, make some changes. Add a file or 
+something. Or get some actual work done; not a big deal what happens.</p>
+
+<p>I would like to note here that I'm going to skim over a lot of juicy 
+Git functionality and internal workings here and just demonstrate some 
+of the more fundamental workflows. Additionally, I'm not at all familiar
+ with TortoiseGit, so the sequence of buttons that I tell you to press 
+may not be optimal -- there may be features that combine multiply steps 
+(e.g., for the command-line inclined, <code>git commit -a</code> instead of <code>git add -A ; git commit</code>
+ (ignore that they have slightly different semantics)). Please fiddle 
+with the interface; I'm sure it's filled with gems of some sort.</p>
+
+<p>When you've changed something, go to the main folder of your 
+repository and open up the right-click context menu. From that menu, 
+select <code>Add...</code></p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add1.png" alt="add1"></p>
+
+<p>You'll get the above dialog telling you which files have been added, removed or changed. Make sure they're all checked and hit <code>OK</code>. Do note that <strong>adding files does not commit them</strong>. You need to do that in a separate step.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add2.png" alt="add2"></p>
+
+<p>Once you've clicked <code>OK</code>, you'll get this:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add3.png" alt="add3"></p>
+
+<p>To hit the previous point home, this dialog gives you a helpful <code>Commit...</code> button to commit the files you've added/changed/removed. If you don't hit commit, you can select <code>Commit</code> from the right-click context menu at a later point in time. For now though, hit <code>Commit...</code> to arrive at this dialog:</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add4.png" alt="add4"></p>
+
+<p>At this point, write a quick blurb about the changes you've made. The
+ first line of your message should be no longer than 80 characters 
+(basically, fit it in the one line of that text box). Each paragraph 
+should be separated by exactly one blank line. It's not the end of the 
+world if you break these conventions; however, the commit message may 
+look funny in some tools if you do.</p>
+
+<p>Don't worry about all the checkboxes, bells, and whistles for now 
+(though they expose quite a bit of functionality and are fun to play 
+with!). The defaults are usually what you want.</p>
+
+<p>Hit <code>OK</code> to finalize your commit.</p>
+
+<p>You should now be at this dialog (so many dialogs! I'm sorry; this is
+ probably the most verbose way of doing things with TortoiseGit):</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add5.png" alt="add5"></p>
+
+<p>At this point, we've made a commit on our local repository. We want 
+to send that commit up to our fork; this action is called "Pushing". 
+TortoiseGit gives us a helpful button to push our new commit to our 
+fork. Click <code>Push</code>.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/add6.png" alt="add6"></p>
+
+<p>As usual, the defaults are probably what you want here. Make sure that <code>Remote</code> is set to <code>origin</code>, not <code>upstream</code>, then click <code>OK</code>.</p>
+
+<p>Once your commit is pushed to your Github fork, you can peek at your 
+Github page with your browser to see the changes you've made. Note that 
+they haven't been submitted for review for inclusion into the upstream 
+repository. They're just on your fork.</p>
+
+<h2>Getting changes into the upstream repository</h2>
+
+<p>You've made changes to your Github fork, but you need to get them 
+into the upstream repository for everyone else to have access to them. 
+This is done by sending a pull request on the Github web interface. Log 
+into your account and navigate to your fork's page. In the upper 
+right-hand corner, there's a <code>Pull Request</code> button.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/pullreq1.png" alt="pullreq1"></p>
+
+<p>Click the <code>Pull Request</code> button and you'll be taken to the pull request page.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/pullreq2.png" alt="pullreq2"></p>
+
+<p>Throw in a title and a description for the pull request, then hit <code>Submit</code>. We will be sent emails and will have a chance to add comments to your changes.</p>
+
+<p>An important note is that any commits you send to your fork before 
+the pull request is accepted will be merged into that pull request. This
+ lets you make any changes in response to comments, but can be a bit of a
+ surprise if you don't know about it ahead of time.</p>
+
+<p>When the pull request is accepted, you'll be notified by email.</p>
+
+<h2>Getting upstream changes back into your copy</h2>
+
+<p>As all of this is going on, we'll be making changes and sending pull 
+requests. To migrate those changes into your codebase, you'll need to 
+use a <code>Pull</code> command. From the right-click context menu, select <code>Pull</code>.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/pull1.png" alt="pull1"></p>
+
+<p>In the dialog that pops up, select <code>upstream</code> as the remote. If you don't have an <code>upstream</code> option, scroll up to the cloning section of this tutorial; it describes how to configure your remotes properly.</p>
+
+<p><img src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/pull2.png" alt="pull2"></p>
+
+<p>Then just hit <code>OK</code> and any changes made by other people 
+will be pulled into your local repository. They'll be sent to your 
+Github fork when you next push to it.</p>
+
+<h2>Conclusion</h2>
+
+<p>This concludes the brief introduction to basic git usage. There's a 
+massive amount of functionality and things I've skipped over. 
+Unfortunately, most of the git tutorials online focus on the 
+command-line interface rather than using TortoiseGit exclusively. I 
+actually can't find any good, comprehensive TortoiseGit tutorials, but 
+when I do I'll add them here.</p>
+    
+    
+      <section id="related-articles">
+        <div class="container">
+          <h3>Related Articles</h3>
+          <ul>
+            
+              <li><a href="http://uncod.in/blog/setting-up-a-github-account-on-windows7/">Setting up a Github Account on Windows 7</a></li>
+            
+              <li><a href="http://uncod.in/blog/installing-tortoisegit-on-windows7/">Installing TortoiseGit on Windows 7</a></li>
+            
+              <li><a href="http://uncod.in/blog/installing-msysgit-on-windows7/">Installing msysgit on Windows 7</a></li>
+            
+          <ul>
+        </ul></ul></div>
+      </section>
+    
+  </article>
+
+      </div>
+    </div>
+    <div id="footer">
+  <div id="recent-articles">
+  
+
+<h3>Recent Articles</h3>
+<ul>
+  
+    <li title="Setting up a Github Account on Windows 7"><a href="http://uncod.in/blog/setting-up-a-github-account-on-windows7/">Setting up a Github Account on Windows 7</a></li>
+  
+    <li title="Installing TortoiseGit on Windows 7"><a href="http://uncod.in/blog/installing-tortoisegit-on-windows7/">Installing TortoiseGit on Windows 7</a></li>
+  
+    <li title="Installing msysgit on Windows 7"><a href="http://uncod.in/blog/installing-msysgit-on-windows7/">Installing msysgit on Windows 7</a></li>
+  
+    <li title="Github, TortoiseGit, and Organizational Workflow Tutorial"><a href="http://uncod.in/blog/github-tortoisegit-and-organizational-workflow-tutorial/">Github, TortoiseGit, and Organizational Workflow Tutorial</a></li>
+  
+    <li title="Generating Image Assets for Android from SVG Files"><a href="http://uncod.in/blog/android-svg-asset-generator/">Generating Image Assets for Android from SVG Files</a></li>
+  
+</ul>
+
+
+  </div>
+  <div id="uncodin-on-the-web">
+    <h3>Uncodin on the Web</h3>
+    <ul>
+      <li><a href="http://www.readwriteweb.com/archives/future_of_the_smart_home_engineer_hacks_android_wi.php">Future Of the 
+        Smart Home? Engineer Hacks Android With the Kinect API</a></li>
+      <li><a href="http://baalexander.github.com/rosnodejs/">rosnodejs: Programming robots with JavaScript</a></li>
+    </ul> 
+  </div>
+  <div class="clear"></div>
+</div>
+
+    <script src="Github,%20TortoiseGit,%20and%20Organizational%20Workflow%20Tutorial_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-29593105-1']);
+      _gaq.push(['_trackPageview']);
+  
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  
+
+
+</body></html>
